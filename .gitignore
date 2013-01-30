@@ -11,3 +11,8 @@
 *.lai
 *.la
 *.a
+
+#Qt Creator
+*.pro.user
+ui_*
+moc_*
