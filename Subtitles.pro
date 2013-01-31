@@ -7,12 +7,11 @@
 QT       += core gui
 
 TARGET = Subtitles
-TEMPLATE = app
 
+SOURCES += main.cpp \
+        subtitlewidget.cpp
 
-SOURCES += main.cpp\
-        mainwin.cpp \
-    subtitlewidget.cpp
-
-HEADERS  += mainwin.h \
-    subtitlewidget.h
+HEADERS  += \
+    subtitlewidget.h \
+    subtitle.h \
+    time.h
