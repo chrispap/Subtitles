@@ -3,17 +3,20 @@
 #include <QFont>
 #include <QPainter>
 #include <QPainterPath>
+#include <QStyleOption>
 
 SubtitleWidget::SubtitleWidget(QWidget *parent) :
     QWidget(parent),
     currentSubIndex(-1),
     currentMsec(0),
     paused(true),
+    mWidth(600),
+    mHeight(100),
     currentTxt("Press Play")
 {
     /* Set the default font */
     subtitleFont.setBold(true);
-    subtitleFont.setPointSize(19);
+    subtitleFont.setPointSize(25);
 
     /* Timer responsible for update */
     connect(&timer, SIGNAL(timeout()), this, SLOT(updateSubtitle()));
@@ -24,14 +27,14 @@ SubtitleWidget::SubtitleWidget(QWidget *parent) :
 
 QSize SubtitleWidget::minimumSizeHint() const
 {
-    return QSize(400, 50);
+    return QSize(mWidth, mHeight);
 }
 
 void SubtitleWidget::loadSrt(string filename)
 {
-    subVec.push_back(Subtitle(1, Time(0,0,2), Time(0,0,4), string("test sub 1 \n Line _ 2 !")));
-    subVec.push_back(Subtitle(2, Time(0,0,2), Time(0,0,6), string("test sub 2")));
-    subVec.push_back(Subtitle(3, Time(0,0,2), Time(0,0,4), string("test sub 3 \n Line _ 2 !")));
+    subVec.push_back(Subtitle(1, Time(0,0,2), Time(0,0,4), string("test sub 1")));
+    subVec.push_back(Subtitle(2, Time(0,0,2), Time(0,0,6), string("test sub   2")));
+    subVec.push_back(Subtitle(3, Time(0,0,2), Time(0,0,4), string("test sub     3")));
 
 }
 
@@ -66,19 +69,27 @@ void SubtitleWidget::updateSubtitle()
     timer.start(curSub.duration());
 }
 
+void SubtitleWidget::resizeEvent(QResizeEvent *evt)
+{
+    mWidth = width();
+    mHeight = height();
+}
+
 void SubtitleWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
+
     painter.setFont(subtitleFont);
     QFontMetrics fm(subtitleFont);
-    int x = width()/2 - fm.width(currentTxt)/2;
-    int y = height()/2;
+    int txtWidth = fm.width(currentTxt);
+    int txtHeight = fm.height();
+    float s = 0.8 * qMin(width()/txtWidth, height()/txtHeight);
 
+    painter.fillRect(rect(), QColor(100,100,100,50));
     QPainterPath path;
-    path.addText(x,y, subtitleFont, currentTxt);
-    //painter.setPen(pen);
-    //painter.setBrush(brush);
+    path.addText(width()/2-txtWidth/2, txtHeight, subtitleFont, currentTxt);
+    painter.setPen(Qt::black);
+    painter.setBrush(Qt::white);
     painter.drawPath(path);
-
 }

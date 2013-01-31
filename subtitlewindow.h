@@ -25,6 +25,7 @@ private:
     SubtitleWidget *subtitleWidget;
     QPushButton *playButton;
     QPoint dragPosition;
+    QSize dragSize;
     
 };
 

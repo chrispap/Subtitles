@@ -17,10 +17,12 @@ public:
     Time(int hour=0, int min=0, int sec=0, int msec=0)
     {
         ulong x = 1;
+        totalMilliseconds = 0;
+
         totalMilliseconds += x* msec;   x *= MIL_PER_SEC;
-        totalMilliseconds += x* sec;     x *= SEC_PER_MIN;
-        totalMilliseconds += x* min;     x *= MIN_PER_HOUR;
-        totalMilliseconds += x* hour;    x *- HOUR_PER_DAY;
+        totalMilliseconds += x* sec;    x *= SEC_PER_MIN;
+        totalMilliseconds += x* min;    x *= MIN_PER_HOUR;
+        totalMilliseconds += x* hour;   x *= HOUR_PER_DAY;
     }
 
     int hour()

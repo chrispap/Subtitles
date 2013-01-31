@@ -37,9 +37,11 @@ private:
     Time currentMsec;
     int currentSubIndex;
     bool paused;
+    int mWidth, mHeight;
 
 protected:
-    void paintEvent(QPaintEvent *event);
+    void resizeEvent(QResizeEvent *);
+    void paintEvent(QPaintEvent *);
 };
 
 #endif // SUBTITLEWIDGET_H
