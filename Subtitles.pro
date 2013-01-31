@@ -1,21 +1,18 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2013-01-29T21:34:29
+# Project created by QtCreator 2013-01-30T18:52:21
 #
 #-------------------------------------------------
 
 QT       += core gui
 
-TARGET = DrawScreen
+TARGET = Subtitles
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
+        mainwin.cpp \
     subtitlewidget.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += mainwin.h \
     subtitlewidget.h
-
-FORMS    += \
-    mainwindow.ui
