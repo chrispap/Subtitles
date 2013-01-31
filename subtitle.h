@@ -12,7 +12,12 @@ class Subtitle
 
 public:
     Subtitle(int _id, Time _t0, Time _t1, string _txt) :
-        id(_id), t0(_t0), t1(_t1), txt(_txt) { }
+        id(_id),
+        t0(_t0),
+        t1(_t1),
+        txt(_txt)
+    {
+    }
 
     Time startTime() { return t0;}
     Time endTime() { return t1;}

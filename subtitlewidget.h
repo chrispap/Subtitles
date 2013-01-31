@@ -5,12 +5,9 @@
 #include "time.h"
 
 #include <QWidget>
-#include <QLabel>
-#include <QTimer>
 #include <QMouseEvent>
-#include <QList>
-#include <QPoint>
 #include <QPushButton>
+#include <QTimer>
 #include <vector>
 #include <string>
 
@@ -22,36 +19,27 @@ class SubtitleWidget : public QWidget
 
 public:
     SubtitleWidget(QWidget *parent = 0);
-    void loadSubs(string filename);
     QSize minimumSizeHint() const;
+    void loadSrt(string filename);
 
 public slots:
     void play();
     void pause();
 
 private slots:
-    void updateSub();
-    void toggleWindow();
+    void updateSubtitle();
 
 private:
-    QPoint dragPosition;
-    bool hidden;
-    QList<QString> subList;
-    QPushButton *btnPlay;
-    void setSub();
-    QString subTxt;
-    QFont font;
     vector<Subtitle> subVec;
+    QString currentTxt;
+    QFont subtitleFont;
     QTimer timer;
-    bool paused;
-    Time currentTime;
+    Time currentMsec;
     int currentSubIndex;
+    bool paused;
 
 protected:
     void paintEvent(QPaintEvent *event);
-    void mouseDoubleClickEvent (QMouseEvent * event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void mousePressEvent(QMouseEvent *event);
 };
 
 #endif // SUBTITLEWIDGET_H
