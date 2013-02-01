@@ -8,6 +8,7 @@ SubtitleWindow::SubtitleWindow(QWidget *parent) :
     hidden(false)
 {
     setWindowFlags(Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground, true);
 
     QHBoxLayout *lout = new QHBoxLayout;
@@ -23,8 +24,6 @@ SubtitleWindow::SubtitleWindow(QWidget *parent) :
 
 void SubtitleWindow::toggleWindowFrame()
 {
-    setWindowFlags(windowFlags() ^ Qt::FramelessWindowHint);
-
     hidden = !hidden;
 
     if (hidden) {
