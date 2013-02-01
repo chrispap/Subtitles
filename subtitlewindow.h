@@ -5,6 +5,7 @@
 
 #include <QWidget>
 #include <QPushButton>
+#include <QLabel>
 
 class SubtitleWindow : public QWidget
 {
@@ -14,6 +15,8 @@ public:
 
 private slots:
     void toggleWindowFrame();
+    void playStarted();
+    void playPaused();
 
 protected:
     void mouseDoubleClickEvent (QMouseEvent * event);
@@ -23,9 +26,12 @@ protected:
 private:
     bool hidden;
     SubtitleWidget *subtitleWidget;
-    QPushButton *playButton;
+    QPushButton *playButton, *closeButton;
+    QLabel *timeLabel;
     QPoint dragPosition;
     QSize dragSize;
+
+    static const QString play_str, pause_str, exit_str;
     
 };
 

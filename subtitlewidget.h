@@ -8,6 +8,7 @@
 #include <QMouseEvent>
 #include <QPushButton>
 #include <QTimer>
+#include <QTime>
 #include <vector>
 #include <string>
 
@@ -22,25 +23,26 @@ public:
     QSize minimumSizeHint() const;
     void loadSrt(string filename);
 
+signals:
+    void playStarted();
+    void playPaused();
+
 public slots:
-    void play();
-    void pause();
+    void play_pause();
 
 private slots:
     void updateSubtitle();
 
 private:
-    vector<Subtitle> subVec;
-    QString currentTxt;
-    QFont subtitleFont;
-    QTimer timer;
-    Time currentMsec;
-    int currentSubIndex;
+    int subIndex;
     bool paused;
-    int mWidth, mHeight;
+    vector<Subtitle> subVec;
+    QString subLine1, subLine2;
+    QFont subFont;
+    QTimer timer;
+    QTime timeElapsed;
 
 protected:
-    void resizeEvent(QResizeEvent *);
     void paintEvent(QPaintEvent *);
 };
 

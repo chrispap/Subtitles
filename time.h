@@ -6,17 +6,20 @@
 #define MIN_PER_HOUR    60
 #define HOUR_PER_DAY    24
 
-typedef unsigned long int ulong;
-
 class Time
 {
 private:
-    ulong totalMilliseconds;
+    int totalMilliseconds;
 
 public:
+    Time (int _milliseconds):
+        totalMilliseconds(_milliseconds)
+    {
+    }
+
     Time(int hour=0, int min=0, int sec=0, int msec=0)
     {
-        ulong x = 1;
+        int x = 1;
         totalMilliseconds = 0;
         totalMilliseconds += x* msec;   x *= MIL_PER_SEC;
         totalMilliseconds += x* sec;    x *= SEC_PER_MIN;
@@ -26,28 +29,27 @@ public:
 
     int hour() const
     {
-        ulong x = MIL_PER_SEC * SEC_PER_MIN * MIN_PER_HOUR;
-        ulong d = HOUR_PER_DAY;
+        int x = MIL_PER_SEC * SEC_PER_MIN * MIN_PER_HOUR;
         return (totalMilliseconds/x);
     }
 
     int min() const
     {
-        ulong x = MIL_PER_SEC * SEC_PER_MIN;
-        ulong d = MIN_PER_HOUR;
+        int x = MIL_PER_SEC * SEC_PER_MIN;
+        int d = MIN_PER_HOUR;
         return (totalMilliseconds/x)%d;
     }
 
     int sec() const
     {
-        ulong x = MIL_PER_SEC;
-        ulong d = SEC_PER_MIN;
+        int x = MIL_PER_SEC;
+        int d = SEC_PER_MIN;
         return (totalMilliseconds/x)%d;
     }
 
     int msec() const
     {
-        ulong d = MIL_PER_SEC;
+        int d = MIL_PER_SEC;
         return totalMilliseconds%d;
     }
 

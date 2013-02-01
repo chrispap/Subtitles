@@ -8,16 +8,14 @@
 
 SubtitleWidget::SubtitleWidget(QWidget *parent) :
     QWidget(parent),
-    currentSubIndex(-1),
-    currentMsec(0),
+    subIndex(0),
     paused(true),
-    mWidth(600),
-    mHeight(100),
-    currentTxt("Press Play")
+    subLine1("Press Play"),
+    subLine2(":D")
 {
     /* Set the default font */
-    subtitleFont.setBold(true);
-    subtitleFont.setPointSize(25);
+    subFont.setBold(true);
+    subFont.setPointSize(25);
 
     /* Timer responsible for update */
     connect(&timer, SIGNAL(timeout()), this, SLOT(updateSubtitle()));
@@ -28,38 +26,38 @@ SubtitleWidget::SubtitleWidget(QWidget *parent) :
 
 QSize SubtitleWidget::minimumSizeHint() const
 {
-    return QSize(mWidth, mHeight);
+    return QSize(400, 100);
 }
 
 void SubtitleWidget::loadSrt(string filename)
 {
-    subVec.push_back(Subtitle(1, Time(0,0,2), Time(0,0,4), string("test sub 1")));
-    subVec.push_back(Subtitle(2, Time(0,0,5), Time(0,0,6), string("test sub   2")));
-    subVec.push_back(Subtitle(3, Time(0,0,6, 500), Time(0,0,7), string("test sub     3")));
+    subVec.push_back(Subtitle(1, Time(0,0,2), Time(0,0,3), string("test sub 1")));
+    subVec.push_back(Subtitle(2, Time(0,0,4), Time(0,0,5), string("test sub   2")));
+    subVec.push_back(Subtitle(3, Time(0,0,6), Time(0,0,6,500), string("test sub     3")));
 }
 
-void SubtitleWidget::play()
+void SubtitleWidget::play_pause()
 {
     if (paused && !subVec.empty()) {
         paused = false;
         updateSubtitle();
+        emit playStarted();
     }
-}
-
-void SubtitleWidget::pause()
-{
-    paused = true;
-    timer.stop();
+    else if (!paused){
+        paused = true;
+        timer.stop();
+        emit playPaused();
+    }
 }
 
 void SubtitleWidget::updateSubtitle()
 {
     // Just for tests loop...
-    if (++currentSubIndex >= subVec.size()) currentSubIndex=0;
+    if (++subIndex >= subVec.size()) subIndex=0;
 
     /* Find the current subtitle */
-    Subtitle &curSub = subVec[currentSubIndex];
-    currentTxt = QString::fromStdString(curSub.getText());
+    Subtitle &curSub = subVec[subIndex];
+    subLine1 = QString::fromStdString(curSub.getText());
 
     /* Request repaint */
     update();
@@ -70,26 +68,18 @@ void SubtitleWidget::updateSubtitle()
     timer.start(curSub.duration());
 }
 
-void SubtitleWidget::resizeEvent(QResizeEvent *evt)
-{
-    mWidth = width();
-    mHeight = height();
-}
-
 void SubtitleWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    painter.setFont(subtitleFont);
-    QFontMetrics fm(subtitleFont);
-    int txtWidth = fm.width(currentTxt);
-    int txtHeight = fm.height();
-    float s = 0.8 * qMin(width()/txtWidth, height()/txtHeight);
+    painter.setFont(subFont);
+    QFontMetrics fm(subFont);
 
     painter.fillRect(rect(), QColor(100,100,100,50));
     QPainterPath path;
-    path.addText(width()/2-txtWidth/2, txtHeight, subtitleFont, currentTxt);
+    path.addText(width()/2-fm.width(subLine1)/2, fm.height(), subFont, subLine1);
+    path.addText(width()/2-fm.width(subLine2)/2, fm.height()*2.1, subFont, subLine2);
     painter.setPen(Qt::black);
     painter.setBrush(Qt::white);
     painter.drawPath(path);

@@ -21,8 +21,8 @@ public:
 
     const Time &startTime() const { return t0;}
     const Time &endTime() const { return t1;}
-    const string getText() const { return txt; }
-    ulong duration() const { return t1.msecTotal() - t0.msecTotal();}
+    const string &getText() const { return txt; }
+    int duration() const { return t1.msecTotal() - t0.msecTotal();}
 
 private:
     int id;
