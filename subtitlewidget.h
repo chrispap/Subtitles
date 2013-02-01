@@ -22,6 +22,7 @@ public:
     SubtitleWidget(QWidget *parent = 0);
     QSize minimumSizeHint() const;
     void loadSrt(string filename);
+    Time timePlaying();
 
 signals:
     void playStarted();
@@ -29,18 +30,24 @@ signals:
 
 public slots:
     void play_pause();
+    void rewind();
 
 private slots:
     void updateSubtitle();
 
 private:
-    int subIndex;
     bool paused;
+    bool subOn;
+    int subIndex;
+    QTime timeLive;
+    Time timeOffset;
+
     vector<Subtitle> subVec;
     QString subLine1, subLine2;
     QFont subFont;
     QTimer timer;
-    QTime timeElapsed;
+
+    static const QString line1_def, line2_def;
 
 protected:
     void paintEvent(QPaintEvent *);

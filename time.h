@@ -17,7 +17,7 @@ public:
     {
     }
 
-    Time(int hour=0, int min=0, int sec=0, int msec=0)
+    Time(int hour, int min, int sec, int msec=0)
     {
         int x = 1;
         totalMilliseconds = 0;
@@ -26,6 +26,9 @@ public:
         totalMilliseconds += x* min;    x *= MIN_PER_HOUR;
         totalMilliseconds += x* hour;   x *= HOUR_PER_DAY;
     }
+
+    bool operator<=  (const Time &t) { return totalMilliseconds <=  t.totalMilliseconds; }
+    bool operator>=  (const Time &t) { return totalMilliseconds >=  t.totalMilliseconds; }
 
     int hour() const
     {
