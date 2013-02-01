@@ -18,41 +18,40 @@ public:
     {
         ulong x = 1;
         totalMilliseconds = 0;
-
         totalMilliseconds += x* msec;   x *= MIL_PER_SEC;
         totalMilliseconds += x* sec;    x *= SEC_PER_MIN;
         totalMilliseconds += x* min;    x *= MIN_PER_HOUR;
         totalMilliseconds += x* hour;   x *= HOUR_PER_DAY;
     }
 
-    int hour()
+    int hour() const
     {
         ulong x = MIL_PER_SEC * SEC_PER_MIN * MIN_PER_HOUR;
         ulong d = HOUR_PER_DAY;
         return (totalMilliseconds/x);
     }
 
-    int min()
+    int min() const
     {
         ulong x = MIL_PER_SEC * SEC_PER_MIN;
         ulong d = MIN_PER_HOUR;
         return (totalMilliseconds/x)%d;
     }
 
-    int sec()
+    int sec() const
     {
         ulong x = MIL_PER_SEC;
         ulong d = SEC_PER_MIN;
         return (totalMilliseconds/x)%d;
     }
 
-    int msec()
+    int msec() const
     {
         ulong d = MIL_PER_SEC;
         return totalMilliseconds%d;
     }
 
-    int msecTotal()
+    int msecTotal() const
     {
         return totalMilliseconds;
     }

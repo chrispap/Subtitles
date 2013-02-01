@@ -19,10 +19,10 @@ public:
     {
     }
 
-    Time startTime() { return t0;}
-    Time endTime() { return t1;}
-    ulong duration() { return t1.msecTotal() - t0.msecTotal();}
-    string getText() { return txt; }
+    const Time &startTime() const { return t0;}
+    const Time &endTime() const { return t1;}
+    const string getText() const { return txt; }
+    ulong duration() const { return t1.msecTotal() - t0.msecTotal();}
 
 private:
     int id;

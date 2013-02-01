@@ -1,4 +1,5 @@
 #include "subtitlewidget.h"
+#include <QDebug>
 
 #include <QFont>
 #include <QPainter>
@@ -33,9 +34,8 @@ QSize SubtitleWidget::minimumSizeHint() const
 void SubtitleWidget::loadSrt(string filename)
 {
     subVec.push_back(Subtitle(1, Time(0,0,2), Time(0,0,4), string("test sub 1")));
-    subVec.push_back(Subtitle(2, Time(0,0,2), Time(0,0,6), string("test sub   2")));
-    subVec.push_back(Subtitle(3, Time(0,0,2), Time(0,0,4), string("test sub     3")));
-
+    subVec.push_back(Subtitle(2, Time(0,0,5), Time(0,0,6), string("test sub   2")));
+    subVec.push_back(Subtitle(3, Time(0,0,6, 500), Time(0,0,7), string("test sub     3")));
 }
 
 void SubtitleWidget::play()
@@ -66,6 +66,7 @@ void SubtitleWidget::updateSubtitle()
 
     /* Setup timer for this subtitle's duration
        or for the next subtitle appearence*/
+    qDebug() << curSub.duration();
     timer.start(curSub.duration());
 }
 

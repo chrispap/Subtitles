@@ -1,23 +1,23 @@
 #include "subtitlewindow.h"
 
 #include <QHBoxLayout>
+#include <QGridLayout>
 #include <QPalette>
 
 SubtitleWindow::SubtitleWindow(QWidget *parent) :
     QWidget(parent),
     hidden(false)
 {
-    setWindowFlags(Qt::WindowStaysOnTopHint);
-    setWindowFlags(Qt::FramelessWindowHint);
-    setAttribute(Qt::WA_TranslucentBackground, true);
+    setWindowFlags(Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
+    setAttribute(Qt::WA_TranslucentBackground);
 
-    QHBoxLayout *lout = new QHBoxLayout;
+    QGridLayout *lout = new QGridLayout;
     playButton = new QPushButton("Play");
     playButton->setMaximumWidth(50);
     subtitleWidget = new SubtitleWidget;
     QObject::connect(playButton, SIGNAL(clicked()), subtitleWidget, SLOT(play()));
-    lout->addWidget(playButton);
-    lout->addWidget(subtitleWidget);
+    lout->addWidget(playButton, 0,0,1,1, Qt::AlignTop);
+    lout->addWidget(subtitleWidget, 0,1);
 
     setLayout(lout);
 }
@@ -67,4 +67,3 @@ void SubtitleWindow::mouseMoveEvent(QMouseEvent *event)
         event->accept();
     }
 }
-
