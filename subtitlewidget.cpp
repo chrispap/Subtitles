@@ -5,8 +5,8 @@
 
 #include <QFont>
 #include <QUrl>
-#include <Qfile.h>
-#include <Qtextstream.h>
+#include <QFile>
+#include <QTextStream>
 #include <QPainter>
 #include <QPainterPath>
 #include <QStyleOption>
