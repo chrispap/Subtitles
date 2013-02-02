@@ -7,6 +7,7 @@
 const QString SubtitleWindow::play_str(">>");
 const QString SubtitleWindow::pause_str("||");
 const QString SubtitleWindow::exit_str("Close");
+const QString SubtitleWindow::rw_str("Rewind");
 
 SubtitleWindow::SubtitleWindow(QWidget *parent) :
     QWidget(parent),
@@ -18,25 +19,30 @@ SubtitleWindow::SubtitleWindow(QWidget *parent) :
     playButton = new QPushButton(play_str);
     playButton->setMaximumWidth(50);
 
-    closeButton = new QPushButton(exit_str);
-    closeButton->setMaximumWidth(50);
+    exitButton = new QPushButton(exit_str);
+    exitButton->setMaximumWidth(50);
+
+    rwButton = new QPushButton(rw_str);
+    rwButton->setMaximumWidth(50);
 
     timeLabel = new QLabel("00:00");
     timeLabel->setMaximumWidth(50);
     timeLabel->setAlignment(Qt::AlignCenter);
 
-    subtitleWidget = new SubtitleWidget;
+    subWidget = new SubtitleWidget;
 
-    connect(playButton, SIGNAL(clicked()), subtitleWidget, SLOT(play_pause()));
-    connect(subtitleWidget, SIGNAL(playStarted()), this, SLOT(playStarted()));
-    connect(subtitleWidget, SIGNAL(playPaused()), this, SLOT(playPaused()));
-    connect(closeButton, SIGNAL(clicked()), QCoreApplication::instance(), SLOT(quit()));
+    connect(playButton, SIGNAL(clicked()), subWidget, SLOT(play_pause()));
+    connect(rwButton, SIGNAL(clicked()), subWidget, SLOT(rewind()));
+    connect(subWidget, SIGNAL(playStarted()), this, SLOT(playStarted()));
+    connect(subWidget, SIGNAL(playPaused()), this, SLOT(playPaused()));
+    connect(exitButton, SIGNAL(clicked()), QCoreApplication::instance(), SLOT(quit()));
 
     QGridLayout *lout = new QGridLayout;
-    lout->addWidget(playButton, 0, 0);
-    lout->addWidget(closeButton, 1, 0);
-    lout->addWidget(timeLabel, 2, 0);
-    lout->addWidget(subtitleWidget, 0, 1, 4, 1);
+    lout->addWidget(timeLabel,  0, 0);
+    lout->addWidget(playButton, 1, 0);
+    lout->addWidget(rwButton,   2, 0);
+    lout->addWidget(exitButton, 3, 0);
+    lout->addWidget(subWidget,  0, 1, 4, 1);
 
     setLayout(lout);
 }
@@ -47,11 +53,13 @@ void SubtitleWindow::toggleWindowFrame()
 
     if (hidden) {
         playButton->hide();
-        closeButton->hide();
+        exitButton->hide();
+        rwButton->hide();
     }
     else {
         playButton->show();
-        closeButton->show();
+        exitButton->show();
+        rwButton->show();
     }
 
     show();

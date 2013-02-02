@@ -25,13 +25,13 @@ protected:
 
 private:
     bool hidden;
-    SubtitleWidget *subtitleWidget;
-    QPushButton *playButton, *closeButton;
+    SubtitleWidget *subWidget;
+    QPushButton *playButton, *exitButton, *rwButton;
     QLabel *timeLabel;
     QPoint dragPosition;
     QSize dragSize;
 
-    static const QString play_str, pause_str, exit_str;
+    static const QString play_str, pause_str, exit_str, rw_str;
     
 };
 

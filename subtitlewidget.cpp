@@ -4,6 +4,9 @@
 #include "time.h"
 
 #include <QFont>
+#include <QUrl>
+#include <Qfile.h>
+#include <Qtextstream.h>
 #include <QPainter>
 #include <QPainterPath>
 #include <QStyleOption>
@@ -28,8 +31,7 @@ SubtitleWidget::SubtitleWidget(QWidget *parent) :
     connect(&timer, SIGNAL(timeout()), this, SLOT(updateSubtitle()));
     timer.setSingleShot(true);
 
-    /* Load subs */
-    loadSrt("/home/chris/sub.srt");
+    setAcceptDrops(true);
 }
 
 QSize SubtitleWidget::minimumSizeHint() const
@@ -37,11 +39,37 @@ QSize SubtitleWidget::minimumSizeHint() const
     return QSize(400, 100);
 }
 
-void SubtitleWidget::loadSrt(string filename)
+void SubtitleWidget::loadSrt(QString filename)
 {
-    subVec.push_back(Subtitle(1, Time(0,0,0), Time(0,0,1), string("test sub 1")));
-    subVec.push_back(Subtitle(2, Time(0,0,2), Time(0,0,3), string("test sub 2")));
-    subVec.push_back(Subtitle(3, Time(0,0,4), Time(0,0,8), string("test sub 3")));
+    vector<QString> lines;
+    int id, h[2], m[2], s[2], ms[2];
+    char c;
+    QString str;
+
+    QFile file(filename);
+    if (!file.open(QFile::ReadOnly))
+        return ;
+
+    QTextStream stream(&file);
+    while (!stream.atEnd()) {
+        id = stream.readLine().toInt();
+
+        stream >>
+            id >> h[0] >> c >> m[0] >> c >> s[0] >> c >> ms[0] >> str >>
+            id >> h[1] >> c >> m[1] >> c >> s[1] >> c >> ms[1];
+
+        stream.skipWhiteSpace();
+
+        while ((str=stream.readLine()).size()>0)
+            lines.push_back(str);
+
+        subVec.push_back(Subtitle(id, Time(h[0],m[0],s[0],ms[0]), Time(h[1],m[1],s[1],ms[1]), lines));
+        lines.clear();
+        stream.skipWhiteSpace();
+    }
+
+    file.close(); // when your done.
+
 }
 
 Time SubtitleWidget::timePlaying()
@@ -104,7 +132,9 @@ void SubtitleWidget::updateSubtitle()
     else {
         /* We are inside the time span of a subtitle */
         Subtitle &nSub = subVec[subIndex];
-        subLine1 = QString::fromStdString(nSub.getText());
+        vector<QString> lines = nSub.getLines();
+        subLine1 = lines.at(0);
+        subLine2.clear();
 
         /* Schedule subtitle's disappearence */
         timer.start(nSub.endTime().msecTotal() - time.msecTotal() + 10);
@@ -131,4 +161,25 @@ void SubtitleWidget::paintEvent(QPaintEvent *)
     painter.setPen(Qt::black);
     painter.setBrush(Qt::white);
     painter.drawPath(path);
+}
+
+void SubtitleWidget::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (event->mimeData()->hasUrls())
+        event->acceptProposedAction();
+}
+
+
+void SubtitleWidget::dropEvent(QDropEvent *event)
+{
+    const QMimeData* mimeData = event->mimeData();
+
+    if (mimeData->hasUrls())
+    {
+        QList<QUrl> urlList = mimeData->urls();
+
+        for (int i = 0; i < urlList.size() && i < 1; ++i)
+            loadSrt(urlList.at(i).toLocalFile());
+
+    }
 }

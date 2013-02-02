@@ -21,7 +21,7 @@ class SubtitleWidget : public QWidget
 public:
     SubtitleWidget(QWidget *parent = 0);
     QSize minimumSizeHint() const;
-    void loadSrt(string filename);
+    void loadSrt(QString filename);
     Time timePlaying();
 
 signals:
@@ -51,6 +51,9 @@ private:
 
 protected:
     void paintEvent(QPaintEvent *);
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dropEvent(QDropEvent *event);
+
 };
 
 #endif // SUBTITLEWIDGET_H

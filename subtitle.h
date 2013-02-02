@@ -3,7 +3,8 @@
 
 #include "time.h"
 
-#include <string>
+#include <QString>
+#include <vector>
 
 using namespace std;
 
@@ -11,24 +12,28 @@ class Subtitle
 {
 
 public:
-    Subtitle(int _id, Time _t0, Time _t1, string _txt) :
+    Subtitle(int _id, Time _t0, Time _t1, vector<QString> &_lines) :
         id(_id),
         t0(_t0),
         t1(_t1),
-        txt(_txt)
+        lines(_lines)
     {
+
     }
 
     const Time &startTime() const { return t0;}
+
     const Time &endTime() const { return t1;}
-    const string &getText() const { return txt; }
+
+    const vector<QString> &getLines() const { return lines; }
+
     int duration() const { return t1.msecTotal() - t0.msecTotal();}
 
 private:
     int id;
     Time t0;
     Time t1;
-    string txt;
+    vector<QString> lines;
 };
 
 #endif // SUBTITLE_H
