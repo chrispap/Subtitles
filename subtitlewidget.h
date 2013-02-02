@@ -43,11 +43,11 @@ private:
     Time timeOffset;
 
     vector<Subtitle> subVec;
-    QString subLine1, subLine2;
+    vector<QString> subLines;
     QFont subFont;
     QTimer timer;
 
-    static const QString line1_def, line2_def;
+    static const QString ready_str, promt_str;
 
 protected:
     void paintEvent(QPaintEvent *);

@@ -11,21 +11,21 @@
 #include <QPainterPath>
 #include <QStyleOption>
 
-const QString SubtitleWidget::line1_def("Press Play");
-const QString SubtitleWidget::line2_def(":D");
+const QString SubtitleWidget::ready_str("Press Play");
+const QString SubtitleWidget::promt_str("Drag & Drop .srt file here.");
 
 SubtitleWidget::SubtitleWidget(QWidget *parent) :
     QWidget(parent),
     paused(true),
     subOn(false),
     subIndex(0),
-    timeOffset(0),
-    subLine1(line1_def),
-    subLine2(line2_def)
+    timeOffset(0)
 {
     /* Set the default font */
     subFont.setBold(true);
-    subFont.setPointSize(25);
+    subFont.setPointSize(23);
+
+    subLines.push_back(promt_str);
 
     /* Timer responsible for update */
     connect(&timer, SIGNAL(timeout()), this, SLOT(updateSubtitle()));
@@ -36,7 +36,7 @@ SubtitleWidget::SubtitleWidget(QWidget *parent) :
 
 QSize SubtitleWidget::minimumSizeHint() const
 {
-    return QSize(400, 100);
+    return QSize(600, 120);
 }
 
 void SubtitleWidget::loadSrt(QString filename)
@@ -70,6 +70,9 @@ void SubtitleWidget::loadSrt(QString filename)
 
     file.close(); // when your done.
 
+    subLines.clear();
+    subLines.push_back(ready_str);
+    update();
 }
 
 Time SubtitleWidget::timePlaying()
@@ -103,8 +106,7 @@ void SubtitleWidget::rewind()
     timeOffset = Time(0);
     subIndex = 0;
     paused = true;
-    subLine1 = line1_def;
-    subLine2 = line2_def;
+    subLines.clear();
     update();
     emit playPaused();
 }
@@ -124,17 +126,14 @@ void SubtitleWidget::updateSubtitle()
         return;
     }
     else if (time >= cSub.endTime()) {
-        subLine1.clear();
-        subLine2.clear();
+        subLines.clear();
         ++subIndex;
         updateSubtitle();
     }
     else {
         /* We are inside the time span of a subtitle */
         Subtitle &nSub = subVec[subIndex];
-        vector<QString> lines = nSub.getLines();
-        subLine1 = lines.at(0);
-        subLine2.clear();
+        subLines = nSub.getLines();
 
         /* Schedule subtitle's disappearence */
         timer.start(nSub.endTime().msecTotal() - time.msecTotal() + 10);
@@ -156,8 +155,9 @@ void SubtitleWidget::paintEvent(QPaintEvent *)
 
     painter.fillRect(rect(), QColor(100,100,100,50));
     QPainterPath path;
-    path.addText(width()/2-fm.width(subLine1)/2, fm.height(), subFont, subLine1);
-    path.addText(width()/2-fm.width(subLine2)/2, fm.height()*2.1, subFont, subLine2);
+
+    for (int i=0; i< subLines.size(); ++i)
+        path.addText(width()/2-fm.width(subLines[i])/2, fm.height()*(i+1.1), subFont, subLines[i]);
     painter.setPen(Qt::black);
     painter.setBrush(Qt::white);
     painter.drawPath(path);
