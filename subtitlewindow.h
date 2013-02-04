@@ -13,18 +13,21 @@ class SubtitleWindow : public QWidget
 public:
     explicit SubtitleWindow(QWidget *parent = 0);
 
+signals:
+    void visibilityChanged(bool visible);
+
 private slots:
-    void toggleWindowFrame();
+    void toggleVisibility();
     void playStarted();
     void playPaused();
 
 protected:
-    void mouseDoubleClickEvent (QMouseEvent * event);
+    void mouseDoubleClickEvent (QMouseEvent *);
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
 
 private:
-    bool hidden;
+    bool visible;
     SubtitleWidget *subWidget;
     QPushButton *playButton, *exitButton, *rwButton;
     QLabel *timeLabel;

@@ -1,57 +1,65 @@
 #include "subtitlewindow.h"
 
+#include <QCoreApplication>
 #include <QHBoxLayout>
 #include <QGridLayout>
-#include <QCoreApplication>
+#include <QFont>
 
-const QString SubtitleWindow::play_str(">>");
+const QString SubtitleWindow::play_str(">");
 const QString SubtitleWindow::pause_str("||");
-const QString SubtitleWindow::exit_str("Close");
-const QString SubtitleWindow::rw_str("Rewind");
+const QString SubtitleWindow::exit_str("X");
+const QString SubtitleWindow::rw_str("<<");
 
 SubtitleWindow::SubtitleWindow(QWidget *parent) :
     QWidget(parent),
-    hidden(false)
+    visible(true)
 {
     setWindowFlags(Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground);
 
+    QFont btnFont;
+    btnFont.setBold(true);
+
     playButton = new QPushButton(play_str);
     playButton->setMaximumWidth(50);
+    playButton->setFont(btnFont);
 
     exitButton = new QPushButton(exit_str);
     exitButton->setMaximumWidth(50);
+    exitButton->setFont(btnFont);
 
     rwButton = new QPushButton(rw_str);
     rwButton->setMaximumWidth(50);
+    rwButton->setFont(btnFont);
 
     timeLabel = new QLabel("00:00");
     timeLabel->setMaximumWidth(50);
     timeLabel->setAlignment(Qt::AlignCenter);
 
-    subWidget = new SubtitleWidget;
+    subWidget = new SubtitleWidget(true);
 
     connect(playButton, SIGNAL(clicked()), subWidget, SLOT(play_pause()));
     connect(rwButton, SIGNAL(clicked()), subWidget, SLOT(rewind()));
     connect(subWidget, SIGNAL(playStarted()), this, SLOT(playStarted()));
     connect(subWidget, SIGNAL(playPaused()), this, SLOT(playPaused()));
     connect(exitButton, SIGNAL(clicked()), QCoreApplication::instance(), SLOT(quit()));
+    connect(this, SIGNAL(visibilityChanged(bool)), subWidget, SLOT(setVisibility(bool)));
 
     QGridLayout *lout = new QGridLayout;
-    lout->addWidget(timeLabel,  0, 0);
+    lout->addWidget(exitButton, 0, 0);
     lout->addWidget(playButton, 1, 0);
     lout->addWidget(rwButton,   2, 0);
-    lout->addWidget(exitButton, 3, 0);
+    lout->addWidget(timeLabel,  3, 0);
     lout->addWidget(subWidget,  0, 1, 4, 1);
 
     setLayout(lout);
 }
 
-void SubtitleWindow::toggleWindowFrame()
+void SubtitleWindow::toggleVisibility()
 {
-    hidden = !hidden;
+    visible = !visible;
 
-    if (hidden) {
+    if (!visible) {
         playButton->hide();
         exitButton->hide();
         rwButton->hide();
@@ -61,6 +69,8 @@ void SubtitleWindow::toggleWindowFrame()
         exitButton->show();
         rwButton->show();
     }
+
+    emit visibilityChanged(visible);
 
     show();
 }
@@ -75,9 +85,9 @@ void SubtitleWindow::playPaused()
     playButton->setText(play_str);
 }
 
-void SubtitleWindow::mouseDoubleClickEvent(QMouseEvent *event)
+void SubtitleWindow::mouseDoubleClickEvent(QMouseEvent *)
 {
-    toggleWindowFrame();
+    toggleVisibility();
 }
 
 void SubtitleWindow::mousePressEvent(QMouseEvent *event)

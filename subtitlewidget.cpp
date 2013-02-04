@@ -11,11 +11,13 @@
 #include <QPainterPath>
 #include <QStyleOption>
 
-const QString SubtitleWidget::ready_str("Press Play");
+const QString SubtitleWidget::ready_str1("Loaded succesfully");
+const QString SubtitleWidget::ready_str2("Press Play");
 const QString SubtitleWidget::promt_str("Drag & Drop .srt file here.");
 
-SubtitleWidget::SubtitleWidget(QWidget *parent) :
+SubtitleWidget::SubtitleWidget(bool _visible, QWidget *parent) :
     QWidget(parent),
+    visible(_visible),
     paused(true),
     subOn(false),
     subIndex(0),
@@ -39,6 +41,12 @@ QSize SubtitleWidget::minimumSizeHint() const
     return QSize(600, 120);
 }
 
+void SubtitleWidget::setVisibility(bool _visible)
+{
+    visible = _visible;
+    update();
+}
+
 void SubtitleWidget::loadSrt(QString filename)
 {
     vector<QString> lines;
@@ -49,6 +57,9 @@ void SubtitleWidget::loadSrt(QString filename)
     QFile file(filename);
     if (!file.open(QFile::ReadOnly))
         return ;
+
+    // Shouldn't clear the previous subs before ensuring that we have a valid .srt file but anyway...
+    subVec.clear();
 
     QTextStream stream(&file);
     while (!stream.atEnd()) {
@@ -70,8 +81,9 @@ void SubtitleWidget::loadSrt(QString filename)
 
     file.close(); // when your done.
 
-    subLines.clear();
-    subLines.push_back(ready_str);
+    rewind();
+    subLines.push_back(ready_str1);
+    subLines.push_back(ready_str2);
     update();
 }
 
@@ -120,7 +132,7 @@ void SubtitleWidget::updateSubtitle()
 
     Subtitle &cSub = subVec[subIndex];
     Time time = timePlaying();
-    qDebug() << subIndex;
+
     if (time <= cSub.startTime()) { // Schedule cSub's appearence
         timer.start(cSub.startTime().msecTotal() - time.msecTotal() + 10);
         return;
@@ -150,14 +162,16 @@ void SubtitleWidget::paintEvent(QPaintEvent *)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
+    if (visible)
+        painter.fillRect(rect(), QColor(100,100,100,150));
+
+    QPainterPath path;    
     painter.setFont(subFont);
     QFontMetrics fm(subFont);
 
-    painter.fillRect(rect(), QColor(100,100,100,50));
-    QPainterPath path;
-
     for (int i=0; i< subLines.size(); ++i)
         path.addText(width()/2-fm.width(subLines[i])/2, fm.height()*(i+1.1), subFont, subLines[i]);
+
     painter.setPen(Qt::black);
     painter.setBrush(Qt::white);
     painter.drawPath(path);
@@ -168,7 +182,6 @@ void SubtitleWidget::dragEnterEvent(QDragEnterEvent *event)
     if (event->mimeData()->hasUrls())
         event->acceptProposedAction();
 }
-
 
 void SubtitleWidget::dropEvent(QDropEvent *event)
 {

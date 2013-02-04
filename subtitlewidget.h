@@ -19,7 +19,7 @@ class SubtitleWidget : public QWidget
     Q_OBJECT
 
 public:
-    SubtitleWidget(QWidget *parent = 0);
+    SubtitleWidget(bool _visible, QWidget *parent = 0);
     QSize minimumSizeHint() const;
     void loadSrt(QString filename);
     Time timePlaying();
@@ -31,11 +31,13 @@ signals:
 public slots:
     void play_pause();
     void rewind();
+    void setVisibility(bool visible);
 
 private slots:
     void updateSubtitle();
 
 private:
+    bool visible;
     bool paused;
     bool subOn;
     int subIndex;
@@ -47,7 +49,7 @@ private:
     QFont subFont;
     QTimer timer;
 
-    static const QString ready_str, promt_str;
+    static const QString ready_str1, ready_str2, promt_str;
 
 protected:
     void paintEvent(QPaintEvent *);
