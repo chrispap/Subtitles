@@ -59,16 +59,16 @@ void SubtitleWindow::toggleVisibility()
 {
     visible = !visible;
 
-    if (!visible) {
-        playButton->hide();
-        exitButton->hide();
-        rwButton->hide();
-    }
-    else {
-        playButton->show();
-        exitButton->show();
-        rwButton->show();
-    }
+//    if (!visible) {
+//        playButton->hide();
+//        exitButton->hide();
+//        rwButton->hide();
+//    }
+//    else {
+//        playButton->show();
+//        exitButton->show();
+//        rwButton->show();
+//    }
 
     emit visibilityChanged(visible);
 
