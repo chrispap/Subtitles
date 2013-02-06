@@ -162,8 +162,8 @@ void SubtitleWidget::paintEvent(QPaintEvent *)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    if (visible)
-        painter.fillRect(rect(), QColor(100,100,100,150));
+//    if (visible)
+    painter.fillRect(rect(), QColor(100,100,100,visible?200:1));
 
     QPainterPath path;    
     painter.setFont(subFont);
