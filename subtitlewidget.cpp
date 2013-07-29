@@ -1,6 +1,4 @@
 #include "subtitlewidget.h"
-#include <QDebug>
-
 #include "time.h"
 
 #include <QFont>
@@ -10,6 +8,8 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QStyleOption>
+
+using namespace std;
 
 const QString SubtitleWidget::ready_str1("Loaded succesfully");
 const QString SubtitleWidget::ready_str2("Press Play");
@@ -55,26 +55,30 @@ void SubtitleWidget::loadSrt(QString filename)
     QString str;
 
     QFile file(filename);
-    if (!file.open(QFile::ReadOnly))
-        return ;
+    if (!file.open(QFile::ReadOnly)) return;
 
     // Shouldn't clear the previous subs before ensuring that we have a valid .srt file but anyway...
     subVec.clear();
 
     QTextStream stream(&file);
+    stream.setIntegerBase(10);
+
     while (!stream.atEnd()) {
+        /* Read subtitle id */
         id = stream.readLine().toInt();
-
-        stream >>
-            id >> h[0] >> c >> m[0] >> c >> s[0] >> c >> ms[0] >> str >>
-            id >> h[1] >> c >> m[1] >> c >> s[1] >> c >> ms[1];
-
         stream.skipWhiteSpace();
 
-        while ((str=stream.readLine()).size()>0)
-            lines.push_back(str);
+        /* Read start/end time */
+        stream >> h[0] >> c >> m[0] >> c >> s[0] >> c >> ms[0] >> str >> // Start time --> ...
+                  h[1] >> c >> m[1] >> c >> s[1] >> c >> ms[1]; // ... end time
+        stream.skipWhiteSpace();
 
-        subVec.push_back(Subtitle(id, Time(h[0],m[0],s[0],ms[0]), Time(h[1],m[1],s[1],ms[1]), lines));
+        /* Read subtitle text lines */
+        while ((str=stream.readLine()).size()>0) lines.push_back(str);
+
+        Subtitle sub(id, Time(h[0],m[0],s[0],ms[0]), Time(h[1],m[1],s[1],ms[1]), lines);
+        subVec.push_back(sub);
+        sub.print();
         lines.clear();
         stream.skipWhiteSpace();
     }
