@@ -13,7 +13,8 @@ using namespace std;
 
 const QString SubtitleWidget::ready_str1("Loaded succesfully");
 const QString SubtitleWidget::ready_str2("Press Play");
-const QString SubtitleWidget::promt_str("Drag & Drop .srt file here.");
+const QString SubtitleWidget::promt_str1("Drop");
+const QString SubtitleWidget::promt_str2("Subtitle File");
 
 SubtitleWidget::SubtitleWidget(bool _visible, QWidget *parent) :
     QWidget(parent),
@@ -27,7 +28,8 @@ SubtitleWidget::SubtitleWidget(bool _visible, QWidget *parent) :
     subFont.setBold(true);
     subFont.setPointSize(23);
 
-    subLines.push_back(promt_str);
+    subLines.push_back(promt_str1);
+    subLines.push_back(promt_str2);
 
     /* Timer responsible for update */
     connect(&timer, SIGNAL(timeout()), this, SLOT(updateSubtitle()));

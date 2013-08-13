@@ -49,7 +49,7 @@ private:
     QFont subFont;
     QTimer timer;
 
-    static const QString ready_str1, ready_str2, promt_str;
+    static const QString ready_str1, ready_str2, promt_str1, promt_str2;
 
 protected:
     void paintEvent(QPaintEvent *);
