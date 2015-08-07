@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include <iostream>
 #include <QString>
 
 using namespace std;
@@ -36,7 +37,8 @@ public:
         printf("id:%-4d - %2d:%2d:%2d:%3d - ", getId(), startTime().hour(), startTime().min(), startTime().sec(), startTime().msec());
         printf("%2d:%2d:%2d:%3d ", endTime().hour(), endTime().min(), endTime().sec(), endTime().msec());
         printf("[");
-        for (int i=0; i<lines.size(); i++) printf("%s", lines.at(i).toAscii().constData());
+        for (int i=0; i<lines.size(); i++)
+            std::cout << lines.at(i).toStdString();
         printf("]\n");
 
     }

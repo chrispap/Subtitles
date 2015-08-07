@@ -8,6 +8,8 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QStyleOption>
+#include <QDragEnterEvent>
+#include <QMimeData>
 
 using namespace std;
 

@@ -3,9 +3,8 @@
 
 #include "subtitlewidget.h"
 
-#include <QWidget>
-#include <QPushButton>
-#include <QLabel>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QLabel>
 
 class SubtitleWindow : public QWidget
 {
