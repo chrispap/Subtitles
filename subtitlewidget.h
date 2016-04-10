@@ -10,9 +10,6 @@
 #include <QTimer>
 #include <QTime>
 #include <vector>
-#include <string>
-
-using namespace std;
 
 class SubtitleWidget : public QWidget
 {
@@ -44,15 +41,15 @@ private slots:
     void updateSubtitle();
 
 private:
+    std::vector<Subtitle> m_subs;
+    std::vector<QString> m_sub_lines;
+    unsigned m_sub_index;
     bool m_visible;
     bool m_paused;
     bool m_sub_on;
-    int m_sub_index;
+    QFont m_sub_font;
     QTime m_time_live;
     Time m_time_offset;
-    vector<Subtitle> m_subs;
-    vector<QString> m_sub_lines;
-    QFont m_sub_font;
     QTimer m_timer;
 
 private:

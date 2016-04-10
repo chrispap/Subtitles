@@ -22,6 +22,7 @@ SubtitleWindow::SubtitleWindow(QWidget *parent)
     m_timelabel = new QLabel("00:00");
     m_timelabel->setAlignment(Qt::AlignCenter);
     m_timelabel->setFont(btnFont);
+    m_timelabel->setMaximumWidth(m_timelabel->width());
     m_playback_controls = new PlaybackControls();
     m_playback_controls->wheel_speed->hide();
     m_playback_controls->label_speed->hide();
@@ -43,18 +44,24 @@ SubtitleWindow::SubtitleWindow(QWidget *parent)
     connect(m_subtitle_widget, SIGNAL(playPaused()), m_playback_controls, SLOT(pause()));
     connect(m_btn_exit, SIGNAL(clicked()), QCoreApplication::instance(), SLOT(quit()));
     connect(this, SIGNAL(visibilityChanged(bool)), m_subtitle_widget, SLOT(setVisibility(bool)));
-    connect(&m_timer, &QTimer::timeout, this, [=](){
-        const Time &t = m_subtitle_widget->timePlaying();
-        const Time &tt = m_subtitle_widget->totalTime();
-        m_timelabel->setText(QString("%1:%2:%3")
-                             .arg(t.hour())
-                             .arg(t.min(), 2, 10, QChar('0'))
-                             .arg(t.sec(), 2, 10, QChar('0')));
-        if (tt.msecTotal()>0) {
-            m_playback_controls->setTimebar((float)t.msecTotal()/tt.msecTotal());
-        }
-    });
+    connect(&m_timer, &QTimer::timeout, this, &SubtitleWindow::onTimeChanged);
     m_timer.start(70);
+}
+
+void SubtitleWindow::onTimeChanged()
+{
+    const Time &t = m_subtitle_widget->timePlaying();
+    const Time &tt = m_subtitle_widget->totalTime();
+
+    if (tt.msecTotal()>0)
+    {
+        m_playback_controls->setTimebar((float)t.msecTotal()/tt.msecTotal());
+    }
+
+    m_timelabel->setText(QString("%1:%2:%3")
+                         .arg(t.hour())
+                         .arg(t.min(), 2, 10, QChar('0'))
+                         .arg(t.sec(), 2, 10, QChar('0')));
 }
 
 void SubtitleWindow::toggleVisibility()

@@ -146,8 +146,7 @@ void SubtitleWidget::setTime(float a)
     if (tt.msecTotal() == 0) return;
 
     //TODO: Find subtitle index for this time moment
-    m_time_offset = a * tt.msecTotal();
-    m_time_live.start();
+    m_time_offset = tt.msecTotal() * a;
 }
 
 void SubtitleWidget::updateSubtitle()
@@ -196,7 +195,7 @@ void SubtitleWidget::paintEvent(QPaintEvent *)
     painter.setFont(m_sub_font);
     QFontMetrics fm(m_sub_font);
 
-    for (int i=0; i< m_sub_lines.size(); ++i) {
+    for (unsigned i=0; i != m_sub_lines.size(); ++i) {
         path.addText(width()/2-fm.width(m_sub_lines[i])/2, fm.height()*(i+1.1), m_sub_font, m_sub_lines[i]);
     }
 

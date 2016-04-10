@@ -19,6 +19,7 @@ signals:
 
 private slots:
     void toggleVisibility();
+    void onTimeChanged();
 
 protected:
     void mouseDoubleClickEvent (QMouseEvent *);
