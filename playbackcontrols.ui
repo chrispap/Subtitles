@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PlaybackControls</class>
+ <widget class="QWidget" name="PlaybackControls">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>511</width>
+    <height>82</height>
+   </rect>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QPushButton" name="btn_rewind">
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+     <property name="text">
+      <string>Rw</string>
+     </property>
+     <property name="icon">
+      <iconset resource="Icons/icons.qrc">
+       <normaloff>:/Icons/rewind.png</normaloff>:/Icons/rewind.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="btn_play_pause">
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+     <property name="text">
+      <string>Play</string>
+     </property>
+     <property name="icon">
+      <iconset resource="Icons/icons.qrc">
+       <normaloff>:/Icons/play.png</normaloff>:/Icons/play.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSlider" name="slider_timebar">
+     <property name="toolTip">
+      <string>Manipulate Time</string>
+     </property>
+     <property name="maximum">
+      <number>1000</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::NoTicks</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="layout_speed">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label_speed">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Speed: x</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <property name="indent">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="value_speed">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="indent">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QwtWheel" name="wheel_speed" native="true">
+     <property name="value" stdset="0">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="minimum" stdset="0">
+      <double>0.005000000000000</double>
+     </property>
+     <property name="maximum" stdset="0">
+      <double>2.000000000000000</double>
+     </property>
+     <property name="singleStep" stdset="0">
+      <double>0.005000000000000</double>
+     </property>
+    </widget>
+   </item>
+  </layout>
+  <zorder>btn_play_pause</zorder>
+  <zorder>btn_rewind</zorder>
+  <zorder>slider_timebar</zorder>
+  <zorder>wheel_speed</zorder>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QwtWheel</class>
+   <extends>QWidget</extends>
+   <header>qwt_wheel.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="Icons/icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

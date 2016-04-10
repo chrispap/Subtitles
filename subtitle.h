@@ -14,12 +14,13 @@ class Subtitle
 {
 
 public:
-    Subtitle(int _id, Time _t0, Time _t1, vector<QString> &_lines) :
-        id(_id),
-        t0(_t0),
-        t1(_t1),
-        lines(_lines)
+    Subtitle(int _id, Time _t0, Time _t1, vector<QString> &_lines)
+        : id(_id)
+        , t0(_t0)
+        , t1(_t1)
+        , lines(_lines)
     {
+
     }
 
     const int getId() const {return id;}

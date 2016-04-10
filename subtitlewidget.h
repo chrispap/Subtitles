@@ -23,39 +23,40 @@ public:
     QSize minimumSizeHint() const;
     void loadSrt(QString filename);
     Time timePlaying();
-
-signals:
-    void playStarted();
-    void playPaused();
+    Time totalTime();
 
 public slots:
     void play_pause();
     void rewind();
+    void setTime(float a);
     void setVisibility(bool visible);
 
-private slots:
-    void updateSubtitle();
-
-private:
-    bool visible;
-    bool paused;
-    bool subOn;
-    int subIndex;
-    QTime timeLive;
-    Time timeOffset;
-
-    vector<Subtitle> subVec;
-    vector<QString> subLines;
-    QFont subFont;
-    QTimer timer;
-
-    static const QString ready_str1, ready_str2, promt_str1, promt_str2;
+signals:
+    void playStarted();
+    void playPaused();
 
 protected:
     void paintEvent(QPaintEvent *);
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
 
+private slots:
+    void updateSubtitle();
+
+private:
+    bool m_visible;
+    bool m_paused;
+    bool m_sub_on;
+    int m_sub_index;
+    QTime m_time_live;
+    Time m_time_offset;
+    vector<Subtitle> m_subs;
+    vector<QString> m_sub_lines;
+    QFont m_sub_font;
+    QTimer m_timer;
+
+private:
+    static const QString ready_str1, ready_str2, promt_str1, promt_str2;
 };
 
 #endif // SUBTITLEWIDGET_H

@@ -20,34 +20,34 @@ const QString SubtitleWidget::promt_str2("Subtitle File");
 
 SubtitleWidget::SubtitleWidget(bool _visible, QWidget *parent) :
     QWidget(parent),
-    visible(_visible),
-    paused(true),
-    subOn(false),
-    subIndex(0),
-    timeOffset(0)
+    m_visible(_visible),
+    m_paused(true),
+    m_sub_on(false),
+    m_sub_index(0),
+    m_time_offset(0)
 {
     /* Set the default font */
-    subFont.setBold(true);
-    subFont.setPointSize(23);
+    m_sub_font.setBold(true);
+    m_sub_font.setPointSize(23);
 
-    subLines.push_back(promt_str1);
-    subLines.push_back(promt_str2);
+    m_sub_lines.push_back(promt_str1);
+    m_sub_lines.push_back(promt_str2);
 
     /* Timer responsible for update */
-    connect(&timer, SIGNAL(timeout()), this, SLOT(updateSubtitle()));
-    timer.setSingleShot(true);
+    connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateSubtitle()));
+    m_timer.setSingleShot(true);
 
     setAcceptDrops(true);
 }
 
 QSize SubtitleWidget::minimumSizeHint() const
 {
-    return QSize(600, 120);
+    return QSize(800, 200);
 }
 
 void SubtitleWidget::setVisibility(bool _visible)
 {
-    visible = _visible;
+    m_visible = _visible;
     update();
 }
 
@@ -62,7 +62,7 @@ void SubtitleWidget::loadSrt(QString filename)
     if (!file.open(QFile::ReadOnly)) return;
 
     // Shouldn't clear the previous subs before ensuring that we have a valid .srt file but anyway...
-    subVec.clear();
+    m_subs.clear();
 
     QTextStream stream(&file);
     stream.setIntegerBase(10);
@@ -74,15 +74,14 @@ void SubtitleWidget::loadSrt(QString filename)
 
         /* Read start/end time */
         stream >> h[0] >> c >> m[0] >> c >> s[0] >> c >> ms[0] >> str >> // Start time --> ...
-                  h[1] >> c >> m[1] >> c >> s[1] >> c >> ms[1]; // ... end time
+                h[1] >> c >> m[1] >> c >> s[1] >> c >> ms[1]; // ... end time
         stream.skipWhiteSpace();
 
         /* Read subtitle text lines */
         while ((str=stream.readLine()).size()>0) lines.push_back(str);
 
         Subtitle sub(id, Time(h[0],m[0],s[0],ms[0]), Time(h[1],m[1],s[1],ms[1]), lines);
-        subVec.push_back(sub);
-        sub.print();
+        m_subs.push_back(sub);
         lines.clear();
         stream.skipWhiteSpace();
     }
@@ -90,79 +89,100 @@ void SubtitleWidget::loadSrt(QString filename)
     file.close(); // when your done.
 
     rewind();
-    subLines.push_back(ready_str1);
-    subLines.push_back(ready_str2);
+    m_sub_lines.push_back(ready_str1);
+    m_sub_lines.push_back(ready_str2);
     update();
 }
 
 Time SubtitleWidget::timePlaying()
 {
-    if (paused)
-        return timeOffset;
+    if (m_paused)
+    {
+        return m_time_offset;
+    }
     else
-        return Time(timeOffset.msecTotal() + timeLive.elapsed());
+    {
+        return m_time_offset.msecTotal() + m_time_live.elapsed();
+    }
+}
 
+Time SubtitleWidget::totalTime()
+{
+    return m_subs.empty() ? 0 : m_subs.back().endTime();
 }
 
 void SubtitleWidget::play_pause()
 {
-    if (paused && !subVec.empty()) { // play
-        paused = false;
-        timeLive.start();
+    if (m_paused && !m_subs.empty())  // Play
+    {
+        m_paused = false;
+        m_time_live.start();
         updateSubtitle();
         emit playStarted();
     }
-    else if (!paused){ // pause
-        timer.stop();
-        timeOffset = Time(timeOffset.msecTotal() + timeLive.elapsed());
-        paused = true;
+    else if (!m_paused)               // Pause
+    {
+        m_timer.stop();
+        m_time_offset = Time(m_time_offset.msecTotal() + m_time_live.elapsed());
+        m_paused = true;
         emit playPaused();
     }
 }
 
 void SubtitleWidget::rewind()
 {
-    timer.stop();
-    timeOffset = Time(0);
-    subIndex = 0;
-    paused = true;
-    subLines.clear();
+    m_timer.stop();
+    m_time_offset = 0;
+    m_sub_index = 0;
+    m_paused = true;
+    m_sub_lines.clear();
     update();
     emit playPaused();
 }
 
+void SubtitleWidget::setTime(float a)
+{
+    const Time &tt = totalTime();
+    if (tt.msecTotal() == 0) return;
+
+    //TODO: Find subtitle index for this time moment
+    m_time_offset = a * tt.msecTotal();
+    m_time_live.start();
+}
+
 void SubtitleWidget::updateSubtitle()
 {
-    if (subIndex >= subVec.size()) {
+    if (m_sub_index >= m_subs.size())
+    {
         rewind();
         return;
     }
 
-    Subtitle &cSub = subVec[subIndex];
-    Time time = timePlaying();
+    const Subtitle &sub = m_subs[m_sub_index];
+    const Time time = timePlaying();
 
-    if (time <= cSub.startTime()) { // Schedule cSub's appearence
-        timer.start(cSub.startTime().msecTotal() - time.msecTotal() + 10);
+    if (time <= sub.startTime())  // Schedule sub's appearence
+    {
+        m_timer.start(sub.startTime().msecTotal() - time.msecTotal() + 10);
         return;
     }
-    else if (time >= cSub.endTime()) {
-        subLines.clear();
-        ++subIndex;
-        updateSubtitle();
+    else if (time >= sub.endTime())
+    {
+        m_sub_lines.clear();
+        ++m_sub_index;
+        updateSubtitle(); //! <<< Recursion...
     }
-    else {
+    else
+    {
         /* We are inside the time span of a subtitle */
-        Subtitle &nSub = subVec[subIndex];
-        subLines = nSub.getLines();
+        m_sub_lines = sub.getLines();
 
         /* Schedule subtitle's disappearence */
-        timer.start(nSub.endTime().msecTotal() - time.msecTotal() + 10);
+        m_timer.start(sub.endTime().msecTotal() - time.msecTotal() + 10);
     }
 
     /* Request repaint */
     update();
-
-
 }
 
 void SubtitleWidget::paintEvent(QPaintEvent *)
@@ -170,15 +190,15 @@ void SubtitleWidget::paintEvent(QPaintEvent *)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-//    if (visible)
-    painter.fillRect(rect(), QColor(100,100,100,visible?200:1));
+    painter.fillRect(rect(), QColor(100,100,100,m_visible?200:1));
 
-    QPainterPath path;    
-    painter.setFont(subFont);
-    QFontMetrics fm(subFont);
+    QPainterPath path;
+    painter.setFont(m_sub_font);
+    QFontMetrics fm(m_sub_font);
 
-    for (int i=0; i< subLines.size(); ++i)
-        path.addText(width()/2-fm.width(subLines[i])/2, fm.height()*(i+1.1), subFont, subLines[i]);
+    for (int i=0; i< m_sub_lines.size(); ++i) {
+        path.addText(width()/2-fm.width(m_sub_lines[i])/2, fm.height()*(i+1.1), m_sub_font, m_sub_lines[i]);
+    }
 
     painter.setPen(Qt::black);
     painter.setBrush(Qt::white);
@@ -187,8 +207,9 @@ void SubtitleWidget::paintEvent(QPaintEvent *)
 
 void SubtitleWidget::dragEnterEvent(QDragEnterEvent *event)
 {
-    if (event->mimeData()->hasUrls())
+    if (event->mimeData()->hasUrls()) {
         event->acceptProposedAction();
+    }
 }
 
 void SubtitleWidget::dropEvent(QDropEvent *event)
@@ -199,8 +220,8 @@ void SubtitleWidget::dropEvent(QDropEvent *event)
     {
         QList<QUrl> urlList = mimeData->urls();
 
-        for (int i = 0; i < urlList.size() && i < 1; ++i)
+        for (int i = 0; i < urlList.size() && i < 1; ++i) {
             loadSrt(urlList.at(i).toLocalFile());
-
+        }
     }
 }
