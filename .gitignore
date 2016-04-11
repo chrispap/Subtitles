@@ -16,3 +16,6 @@
 *.pro.user
 ui_*
 moc_*
+
+#Windows
+Thumbs.db

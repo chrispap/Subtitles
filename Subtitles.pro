@@ -8,11 +8,12 @@ QT       += core gui widgets
 
 TARGET = Subtitles
 
-SOURCES += main.cpp \
+SOURCES += \
         subtitlewidget.cpp \
     subtitlewindow.cpp \
     playbackcontrols.cpp \
-    time.cpp
+    time.cpp \
+    subtitle.cpp
 
 HEADERS  += \
     subtitlewidget.h \
@@ -27,5 +28,5 @@ FORMS += \
 RESOURCES += \
     Icons/icons.qrc
 
-
 include(C:\libs\Qwt-6.1.2-qt-5.5.0\features\qwt.prf)
+include(D:\Libs\Qwt-6.1.2-qt-5.5.1-vs2013\features\qwt.prf)

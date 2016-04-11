@@ -4,6 +4,7 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QFont>
+#include <QApplication>
 
 const QString SubtitleWindow::exit_str("Close");
 
@@ -17,16 +18,23 @@ SubtitleWindow::SubtitleWindow(QWidget *parent)
     QFont btnFont;
     btnFont.setBold(true);
 
+    QPalette Pal(palette());
+    Pal.setColor(QPalette::Background, Qt::white);
+
     m_btn_exit = new QPushButton(exit_str);
     m_btn_exit->setFont(btnFont);
     m_timelabel = new QLabel("00:00");
     m_timelabel->setAlignment(Qt::AlignCenter);
     m_timelabel->setFont(btnFont);
     m_timelabel->setMaximumWidth(m_timelabel->width());
+    m_timelabel->setAutoFillBackground(true);
+    m_timelabel->setPalette(Pal);
     m_playback_controls = new PlaybackControls();
     m_playback_controls->wheel_speed->hide();
     m_playback_controls->label_speed->hide();
     m_playback_controls->value_speed->hide();
+    m_playback_controls->setAutoFillBackground(true);
+    m_playback_controls->setPalette(Pal);
     m_subtitle_widget = new SubtitleWidget(true);
 
     QGridLayout *layout = new QGridLayout;
@@ -120,4 +128,12 @@ void SubtitleWindow::mouseMoveEvent(QMouseEvent *event)
         resize(x, y);
         event->accept();
     }
+}
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    SubtitleWindow w;
+    w.show();
+    return a.exec();
 }

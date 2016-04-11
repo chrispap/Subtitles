@@ -2,53 +2,33 @@
 #define SUBTITLE_H
 
 #include "time.h"
-
-#include <stdio.h>
-#include <vector>
-#include <iostream>
 #include <QString>
-
-using namespace std;
+#include <iostream>
+#include <vector>
 
 class Subtitle
 {
 
 public:
-    Subtitle(int _id, Time _t0, Time _t1, vector<QString> &_lines)
-        : id(_id)
-        , t0(_t0)
-        , t1(_t1)
-        , lines(_lines)
-    {
+    Subtitle(int _id, Time _t0, Time _t1, std::vector<QString> &_lines);
 
-    }
+    const int getId() const;
 
-    const int getId() const {return id;}
+    const Time &startTime() const;
 
-    const Time &startTime() const { return t0;}
+    const Time &endTime() const;
 
-    const Time &endTime() const { return t1;}
+    const std::vector<QString> &getLines() const;
 
-    const vector<QString> &getLines() const { return lines; }
+    int duration() const;
 
-    int duration() const { return t1.msecTotal() - t0.msecTotal();}
-
-    void print() const
-    {
-        printf("id:%-4d - %2d:%2d:%2d:%3d - ", getId(), startTime().hour(), startTime().min(), startTime().sec(), startTime().msec());
-        printf("%2d:%2d:%2d:%3d ", endTime().hour(), endTime().min(), endTime().sec(), endTime().msec());
-        printf("[");
-        for (unsigned i=0; i!=lines.size(); i++)
-            std::cout << lines.at(i).toStdString();
-        printf("]\n");
-
-    }
+    void print() const;
 
 private:
     int id;
     Time t0;
     Time t1;
-    vector<QString> lines;
+    std::vector<QString> lines;
 };
 
-#endif // SUBTITLE_H
+#endif
